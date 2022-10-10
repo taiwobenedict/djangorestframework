@@ -1,0 +1,114 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>API TUTORIAL</title>
+  </head>
+  <body>
+    <h3>API TUTORIAL!!!</h3>
+    <legend>Choose Your Method</legend>
+    <div style="display: flex">
+      <div>
+        <input type="radio" name="method" id="" value="GET" />
+        <label for="">Get</label>
+      </div>
+      <div>
+        <input type="radio" name="method" id="" value="POST" />
+        <label for="">Post</label>
+      </div>
+      <div>
+        <input type="radio" name="method" id="" value="PUT" />
+        <label for="">Put</label>
+      </div>
+      <div>
+        <input type="radio" name="method" id="" value="DELETE" />
+        <label for="">Delete</label>
+      </div>
+    </div>
+    <br />
+    <div>
+      <label for="url">Url</label>
+      <textarea
+        type="url"
+        name="url"
+        id="url"
+        rows="2"
+        cols="30"
+        required
+      ></textarea>
+    </div>
+    <br />
+    <hr />
+    <form method="post" id="form">{% csrf_token%} {{form.as_p}}</form>
+    <button type="submit" id="submit">Submit</button>
+    <div>
+      <h5>Message</h5>
+      <p class="message"></p>
+    </div>
+    <script>
+      const submit = document.getElementById("submit");
+      const url = document.getElementById("url");
+      const title = document.getElementById("id_title");
+      const code = document.getElementById("id_code");
+      const language = document.getElementById("id_language");
+      const csrftoken = document.cookie.slice(10);
+      const message = document.querySelector(".message");
+      const radioButton = document.querySelectorAll('input[name="method"]');
+      const form = document.querySelector("form");
+
+      // Hide form by default
+      form.style.display = "none";
+      // Hide and Display Form on Click
+      radioButton.forEach((radio) => {
+        radio.onclick = () => {
+          
+          if (radio.checked && radio.value !== 'GET' && radio.value !== 'DELETE') {
+            form.style.display = "block"
+            
+            submit.onclick = ()=> {
+              otherMethod(url.value, radio.value, {
+                title: title.value,
+                code: code.value,
+                language: language.value,
+              })
+            }
+            
+          } else {
+            form.style.display = "none"
+            submit.onclick = ()=> {
+              getMethod(url.value, radio.value)
+            }
+
+          }
+
+        };
+      });
+
+      //  GET data and CREATE data
+      function getMethod(url, method) {
+        fetch(url, {
+          headers: { "X-CSRFToken": csrftoken },
+          mode: "same-origin",
+          method,
+        }).then(response => {
+          message.textContent = response.statusText
+          return response.json()
+        }).then(data => console.log(data));
+      }
+      // UPDATE data and DELETE data
+      function otherMethod(url, method, body) {
+        console.log(url,body, method)
+        fetch(url, {
+          method,
+          headers: { "X-CSRFToken": csrftoken , 'Content-Type':'application/json'},
+          mode: "same-origin",
+          body: JSON.stringify(body),
+        }).then(response => {
+          message.textContent = response.statusText
+          return response.json()
+        }).then(data => console.log(data));;
+      }
+    </script>
+  </body>
+</html>
