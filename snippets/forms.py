@@ -5,7 +5,7 @@ class SnippetForm(forms.ModelForm):
     
     class Meta:
         model = Snippet
-        exclude = ['author']
+        exclude = ['owner']
         fields = ("__all__")
 
 class AuthorForm(forms.ModelForm):
